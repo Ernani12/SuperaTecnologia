@@ -59,8 +59,15 @@ Para instalar e rodar a aplicação localmente, siga as etapas abaixo:
    mvn spring-boot:run
    ```
 
+## **Como Usar**
 
-   ## **Endpoints**
+Após a instalação, você pode acessar a aplicação no seu navegador, através da URL `http://localhost:8080`.
+
+## **Exemplos de Uso**
+
+Para listar todos os itens em destaque, acesse `http://localhost:8080/items/destaque`.
+
+## **Endpoints**
 
 Abaixo estão os principais endpoints da API:
 
@@ -71,4 +78,7 @@ Abaixo estão os principais endpoints da API:
 | POST            | `/items`                | Adiciona um novo item             |
 | PUT             | `/items/{id}`           | Atualiza um item existente        |
 | DELETE          | `/items/{id}`           | Remove um item                    |
+
+
+
 
