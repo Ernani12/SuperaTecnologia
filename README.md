@@ -5,7 +5,8 @@
 
 ## **Descrição**
 
-Este projeto é uma aplicação [descrever tipo de aplicação] desenvolvida em Java com Spring Boot. Ela permite [descreva as principais funcionalidades, como a busca por itens em destaque, cadastro de usuários, etc.]. O objetivo principal é [descrever o objetivo do projeto, por exemplo, "fornecer uma plataforma para a gestão de itens em destaque"].
+Objetivo: Desenvolver uma aplicação web que permita aos usuários gerenciar listas e 
+itens de forma eficiente.
 
 ## **Índice**
 
