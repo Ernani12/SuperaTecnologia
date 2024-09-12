@@ -1,4 +1,5 @@
-# **Nome do Projeto**
+# **Sistema de Gerenciamento de Tarefas Abstrato
+**
 
 ![Badge](https://img.shields.io/badge/versão-1.0.0-blue) ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellowgreen)
 
