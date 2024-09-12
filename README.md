@@ -42,3 +42,33 @@ Para instalar e rodar a aplicação localmente, siga as etapas abaixo:
 
    ```bash
    git clone https://github.com/seu-usuario/nome-do-repositorio.git
+   
+2. **Navegue até o diretório do projeto:
+
+   ```bash
+   cd nome-do-repositorio
+   ```
+
+3. **Instale as dependências:
+   ```bash
+   mvn clean install
+   ```
+
+4. ** Execute a aplicação:
+   ```bash
+   mvn spring-boot:run
+   ```
+
+
+   ## **Endpoints**
+
+Abaixo estão os principais endpoints da API:
+
+| **Método HTTP** | **Endpoint**            | **Descrição**                     |
+|-----------------|-------------------------|-----------------------------------|
+| GET             | `/items`                | Lista todos os itens              |
+| GET             | `/items/destaque`       | Lista todos os itens em destaque  |
+| POST            | `/items`                | Adiciona um novo item             |
+| PUT             | `/items/{id}`           | Atualiza um item existente        |
+| DELETE          | `/items/{id}`           | Remove um item                    |
+
