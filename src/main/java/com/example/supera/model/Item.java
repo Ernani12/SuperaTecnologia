@@ -25,9 +25,25 @@ public class Item {
     private boolean isDestaque;
 
 
+
+    public Item(Long id, String titulo, boolean isDestaque) {
+        this.id = id;
+        this.titulo = titulo;
+        this.isDestaque = isDestaque;
+    }
+
     public Item() {
 
     }
+
+    public Item(Long id, String titulo, String descricao, String estado, Boolean prioridade, boolean isDestaque) {
+        this.id = id;
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.estado = estado;
+        this.prioridade = prioridade;
+        this.isDestaque = isDestaque;
+    }    
 
     @ManyToOne
     @JoinColumn(name = "lista_id")
@@ -50,4 +66,8 @@ public class Item {
     public void setDestaque(boolean isDestaque) {
         this.isDestaque = isDestaque;
     }
+
+
+
+    
 }
