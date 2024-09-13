@@ -43,11 +43,20 @@ public class ItemController {
     }
 
     @PostMapping("/editar/{id}")
-    public String atualizarItem(@PathVariable Long id, @ModelAttribute Item item) {
-        item.setId(id);
-        itemService.save(item);
-        return "redirect:/listas/" + item.getLista().getId();
+    public String atualizarItem(@PathVariable Long id, @ModelAttribute Item itemAtualizado) {
+        Item itemExistente = itemService.findById(id);
+
+    
+        if (itemExistente != null) {
+            itemExistente.setDescricao(itemAtualizado.getDescricao());
+            itemExistente.setDestaque(itemAtualizado.isDestaque()); // Atualizando o campo "destaque"
+            itemService.save(itemExistente);
+        } 
+    
+        return "redirect:/listas/" + itemExistente.getLista().getId();
     }
+    
+     
 
     @GetMapping("/deletar/{id}")
     public String deletarItem(@PathVariable Long id) {
