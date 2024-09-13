@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Item</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Item</h1>
+        <form th:action="@{/itens/editar/{id}(id=${item.id})}" th:object="${item}" method="post">
+            <div class="form-group">
+                <label for="descricao">Descrição</label>
+                <input type="text" id="descricao" name="descricao" class="form-control" th:field="*{descricao}" required>
+            </div>
+            <div class="form-group">
+                <label for="destaque">Destaque</label>
+                <input type="checkbox" id="destaque" name="destaque" th:field="*{destaque}">
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a th:href="@{/listas/{id}(id=${item.lista.id})}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>

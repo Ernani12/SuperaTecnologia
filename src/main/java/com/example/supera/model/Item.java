@@ -15,59 +15,23 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Item {
+
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String titulo;
+
     private String descricao;
-    private String estado; // PENDENTE, CONCLUIDO, CANCELADO
-    private Boolean prioridade;
-    private boolean isDestaque;
-
-
-
-    public Item(Long id, String titulo, boolean isDestaque) {
-        this.id = id;
-        this.titulo = titulo;
-        this.isDestaque = isDestaque;
-    }
+    private boolean destaque;
 
     public Item() {
-
+        
     }
 
-    public Item(Long id, String titulo, String descricao, String estado, Boolean prioridade, boolean isDestaque) {
-        this.id = id;
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.estado = estado;
-        this.prioridade = prioridade;
-        this.isDestaque = isDestaque;
-    }    
 
     @ManyToOne
     @JoinColumn(name = "lista_id")
     private Lista lista;
 
     // Getters e Setters
-
-    public Item(String titulo, String descricao, String estado, Boolean prioridade, Lista lista) {
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.estado = estado;
-        this.prioridade = prioridade;
-        this.lista = lista;
-    }
-
-    public boolean isDestaque() {
-        return isDestaque;
-    }
-
-    public void setDestaque(boolean isDestaque) {
-        this.isDestaque = isDestaque;
-    }
-
-
-
-    
 }
