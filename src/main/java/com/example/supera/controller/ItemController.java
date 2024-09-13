@@ -1,44 +1,58 @@
-
 package com.example.supera.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.supera.DTO.ItemDTO;
 import com.example.supera.model.Item;
+import com.example.supera.model.Lista;
 import com.example.supera.service.ItemService;
+import com.example.supera.service.ListaService;
 
-@RestController
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
 @RequestMapping("/itens")
 public class ItemController {
 
     @Autowired
     private ItemService itemService;
 
-    @GetMapping("/")
-    public String home(){
-        return "hello supera itens";
+    @Autowired
+    private ListaService listaService;
+
+    @GetMapping("/novo/{listaId}")
+    public String adicionarItem(@PathVariable Long listaId, Model model) {
+        Lista lista = listaService.findById(listaId);
+        Item item = new Item();
+        item.setLista(lista);
+        model.addAttribute("item", item);
+        return "adicionar-item";
     }
 
     @PostMapping
-    public ResponseEntity<Item> adicionarItem(@RequestBody ItemDTO itemDTO) {
-        Item item = itemService.adicionarItem(itemDTO.getListaId(), itemDTO.getTitulo(), itemDTO.getDescricao(), itemDTO.getEstado(), itemDTO.getPrioridade());
-        return new ResponseEntity<>(item, HttpStatus.CREATED);
+    public String salvarItem(@ModelAttribute Item item) {
+        itemService.save(item);
+        return "redirect:/listas/" + item.getLista().getId();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarItem(@PathVariable Long id) {
-        itemService.deletarItem(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping("/editar/{id}")
+    public String editarItem(@PathVariable Long id, Model model) {
+        Item item = itemService.findById(id);
+        model.addAttribute("item", item);
+        return "editar-item";
     }
 
-    // Outros endpoints
+    @PostMapping("/editar/{id}")
+    public String atualizarItem(@PathVariable Long id, @ModelAttribute Item item) {
+        item.setId(id);
+        itemService.save(item);
+        return "redirect:/listas/" + item.getLista().getId();
+    }
+
+    @GetMapping("/deletar/{id}")
+    public String deletarItem(@PathVariable Long id) {
+        Item item = itemService.findById(id);
+        itemService.delete(id);
+        return "redirect:/listas/" + item.getLista().getId();
+    }
 }

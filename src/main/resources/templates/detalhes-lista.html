@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Lista</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 th:text="${lista.nome}"></h1>
+        <a th:href="@{/itens/novo/{listaId}(listaId=${lista.id})}" class="btn btn-primary">Adicionar Item</a>
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Destaque</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${itens}">
+                    <td th:text="${item.descricao}"></td>
+                    <td th:text="${item.destaque ? 'Sim' : 'Não'}"></td>
+                    <td>
+                        <a th:href="@{/itens/editar/{id}(id=${item.id})}" class="btn btn-warning">Editar</a>
+                        <a th:href="@{/itens/deletar/{id}(id=${item.id})}" class="btn btn-danger">Deletar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="/listas" class="btn btn-secondary mt-4">Voltar</a>
+    </div>
+</body>
+</html>
