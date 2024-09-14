@@ -3,7 +3,7 @@ package com.example.supera;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,13 +14,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.example.supera.model.Item;
 import com.example.supera.model.Lista;
 import com.example.supera.service.ItemService;
-import java.util.List;
+import com.example.supera.service.ListaService;
+
 
 @SpringBootTest
 class SuperaApplicationTests {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private ListaService listaService;
 
     //BDD
     @Test
@@ -56,5 +60,54 @@ class SuperaApplicationTests {
     }
 
 
+    @Test
+    public void givenList_whenUpdateList_thenListShouldBeUpdated() {
+        // Given
+        Lista lista = new Lista();
+        lista.setNome("Lista Antiga");
+        listaService.save(lista);
+
+        // When
+        lista.setNome("Lista Atualizada");
+        listaService.save(lista);
+
+        // Then
+        assertEquals("Lista Atualizada", listaService.findById(lista.getId()).getNome());
+    }
+   
+    @Test
+    public void testAddItem() {
+        // Given
+        Lista lista = new Lista();
+        lista.setNome("Lista para Itens");
+        listaService.save(lista);
+
+        Item item = new Item();
+        item.setDescricao("Item de Teste");
+        item.setLista(lista);
+
+        // When
+        itemService.save(item);
+
+        // Then
+        Item savedItem = itemService.findById(item.getId());
+        assertNotNull(savedItem);
+        assertEquals("Item de Teste", savedItem.getDescricao());
+    }
+   
+    @Test
+    public void testRemoveItem() {
+        // Given
+        Item item = new Item();
+        item.setDescricao("Item para Remover");
+        itemService.save(item);
+    
+        // When
+        itemService.delete(item.getId());
+    
+        // Then
+        Item deletedItem = itemService.findById(item.getId());
+        assertNull(deletedItem);
+    }
 
 }

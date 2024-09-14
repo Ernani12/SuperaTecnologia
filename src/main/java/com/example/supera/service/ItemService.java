@@ -29,6 +29,6 @@ public class ItemService {
     }
 
     public Item findById(Long id) {
-        return itemRepository.findById(id).orElseThrow(() -> new RuntimeException("Item não encontrado"));
+        return itemRepository.findById(id).orElse(null);
     }
 }
