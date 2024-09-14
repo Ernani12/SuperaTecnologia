@@ -46,15 +46,23 @@ public class ItemController {
     @PostMapping("/editar/{id}")
     public String atualizarItem(@PathVariable Long id, @ModelAttribute Item itemAtualizado) {
         Item itemExistente = itemService.findById(id);
-
     
         if (itemExistente != null) {
             itemExistente.setDescricao(itemAtualizado.getDescricao());
             itemExistente.setDestaque(itemAtualizado.isDestaque()); // Atualizando o campo "destaque"
             itemService.save(itemExistente);
-        } 
     
-        return "redirect:/listas/" + itemExistente.getLista().getId();
+            // Verifica se a lista associada ao item não é nula
+            if (itemExistente.getLista() != null) {
+                return "redirect:/listas/" + itemExistente.getLista().getId();
+            } else {
+                // Se a lista for nula, redireciona para uma página de erro ou para a página inicial
+                return "redirect:/erro"; // Ajuste conforme necessário
+            }
+        } else {
+            // Se o item não for encontrado, redireciona para uma página de erro ou para a página inicial
+            return "redirect:/erro"; // Ajuste conforme necessário
+        }
     }
     
      
