@@ -10,6 +10,9 @@
     <div class="container">
         <h1>Adicionar Novo Item</h1>
         <form th:action="@{/itens}" th:object="${item}" method="post">
+            <!-- Campo oculto para enviar o id da lista -->
+            <input type="hidden" th:field="*{lista.id}" />
+            
             <div class="form-group">
                 <label for="descricao">Descrição</label>
                 <input type="text" id="descricao" name="descricao" class="form-control" th:field="*{descricao}" required>
