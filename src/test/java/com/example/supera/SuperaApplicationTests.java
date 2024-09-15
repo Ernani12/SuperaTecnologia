@@ -2,10 +2,14 @@ package com.example.supera;
 
 
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.supera.model.Item;
 import com.example.supera.model.Lista;
+import com.example.supera.repository.ItemRepository;
 import com.example.supera.service.ItemService;
 import com.example.supera.service.ListaService;
+
 
 
 @SpringBootTest
@@ -25,6 +31,9 @@ class SuperaApplicationTests {
 
     @Autowired
     private ListaService listaService;
+
+    @Autowired
+    private ItemRepository itemRepository;
 
     //BDD
     @Test
@@ -109,5 +118,89 @@ class SuperaApplicationTests {
         Item deletedItem = itemService.findById(item.getId());
         assertNull(deletedItem);
     }
+
+    
+    @Test
+    public void testFindByIdLista() {
+        // Dado uma lista salva no repositório
+        Lista lista = new Lista();
+        lista.setNome("Lista Existente");
+        Lista savedLista = listaService.save(lista);
+
+        // Quando buscar a lista pelo ID
+        Lista foundLista = listaService.findById(savedLista.getId());
+
+        // Então a lista encontrada não deve ser nula
+        assertNotNull(foundLista);
+        assertEquals("Lista Existente", foundLista.getNome());
+    }
+
+
+    @Test
+    public void testSaveLista() {
+        // Dado uma nova lista
+        Lista lista = new Lista();
+        lista.setNome("Nova Lista");
+
+        // Quando salvar a lista
+        Lista savedLista = listaService.save(lista);
+
+        // Então a lista salva deve ter um ID atribuído
+        assertNotNull(savedLista.getId());
+    }
+
+    @Test
+    public void testDeleteLista() {
+        // Dado uma lista salva no repositório
+        Lista lista = new Lista();
+        lista.setNome("Lista para Deletar");
+        Lista savedLista = listaService.save(lista);
+
+        // Quando deletar a lista pelo ID
+        listaService.delete(savedLista.getId());
+
+        // Então a lista não deve ser encontrada
+        assertThrows(RuntimeException.class, () -> listaService.findById(savedLista.getId()));
+    }
+
+
+    @Test
+    public void testFindById_ItemNaoExistente() {
+        // Dado um ID que não existe no repositório
+        Long idNaoExistente = 999L;
+
+        // Quando buscar o item pelo ID
+        Item foundItem = itemService.findById(idNaoExistente);
+
+        // Então o item encontrado deve ser nulo
+        assertNull(foundItem);
+    }
+
+    @Test
+    public void testDelete_ItemNaoExistente() {
+        // Dado um ID que não existe no repositório
+        Long idNaoExistente = 999L;
+
+        // Quando tentar deletar o item
+        // Então não deve lançar nenhuma exceção
+        assertDoesNotThrow(() -> itemService.delete(idNaoExistente));
+    }
+
+    @Test
+    public void testSaveItemWithDestaque() {
+        // Dado um novo item com destaque marcado
+        Item item = new Item();
+        item.setDescricao("Item em Destaque");
+        item.setDestaque(true);
+
+        // Quando salvar o item
+        Item savedItem = itemService.save(item);
+
+        // Então o item salvo deve ter o atributo destaque como verdadeiro
+        assertTrue(savedItem.isDestaque());
+    }
+
+
+
 
 }
