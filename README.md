@@ -63,7 +63,7 @@ Para instalar e rodar a aplicação localmente, siga as etapas abaixo:
 
 ## **Como Usar**
 
-Após a instalação, você pode acessar a aplicação no seu navegador, através da URL `http://localhost:8080`.
+Após a instalação, você pode acessar a aplicação no seu navegador, através da URL `calhost:8080/listas`.
 
 ## **Exemplos de Uso**
 
