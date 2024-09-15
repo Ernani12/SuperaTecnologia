@@ -4,6 +4,7 @@ import com.example.supera.model.Item;
 import com.example.supera.model.Lista;
 import com.example.supera.repository.ItemRepository;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,4 +32,6 @@ public class ItemService {
     public Item findById(Long id) {
         return itemRepository.findById(id).orElse(null);
     }
+
+   
 }

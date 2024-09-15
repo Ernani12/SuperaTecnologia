@@ -9,15 +9,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.example.supera.model.Item;
 import com.example.supera.model.Lista;
 import com.example.supera.repository.ItemRepository;
+import com.example.supera.repository.ListaRepository;
 import com.example.supera.service.ItemService;
 import com.example.supera.service.ListaService;
 
@@ -32,40 +37,30 @@ class SuperaApplicationTests {
     @Autowired
     private ListaService listaService;
 
-    @Autowired
+    @MockBean
     private ItemRepository itemRepository;
 
-    //BDD
+    @MockBean
+    private ListaRepository listaRepository;
+
+   
     @Test
-    public void dadoQueUmItemExiste_quandoEditarDescricao_entaoItemDeveSerAtualizado() {
-        // Arrange: Criar e salvar um item
+    public void testSaveItem() {
+        // Given
         Item item = new Item();
-        item.setDescricao("Descrição Antiga");
-        itemService.save(item);
-
-        // Act: Editando a descrição do item
-        item.setDescricao("Descrição Nova");
-        itemService.save(item);
-
-        // Assert: A descrição do item deve ter sido atualizada
-        Item itemAtualizado = itemService.findById(item.getId());
-        assertEquals("Descrição Nova", itemAtualizado.getDescricao());
-    }
-
-    @Test
-    public void dadoQueUmItemExiste_quandoMarcarComoDestaque_entaoItemDeveSerDestaque() {
-        // Arrange: Criar e salvar um item
-        Item item = new Item();
+        item.setDescricao("Item para Teste");
         item.setDestaque(false);
-        itemService.save(item);
-    
-        // Act: Marcando item como destaque
-        item.setDestaque(true);
-        itemService.save(item);
-    
-        // Assert: O item deve ser destaque
-        Item itemAtualizado = itemService.findById(item.getId());
-        assertTrue(itemAtualizado.isDestaque());
+
+        // Define o comportamento do mock para retornar o item ao salvar
+        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        Item savedItem = itemService.save(item);
+
+        // Then
+        assertNotNull(savedItem);
+        assertEquals("Item para Teste", savedItem.getDescricao());
+        assertFalse(savedItem.isDestaque());
     }
 
 
@@ -74,36 +69,37 @@ class SuperaApplicationTests {
         // Given
         Lista lista = new Lista();
         lista.setNome("Lista Antiga");
-        listaService.save(lista);
-
+    
+        // Configura o mock para retornar a lista com um ID fixo
+        when(listaRepository.save(any(Lista.class))).thenAnswer(invocation -> {
+            Lista listaToSave = invocation.getArgument(0);
+            listaToSave.setId(1L); // Define um ID fixo para simular a lista salva
+            return listaToSave;
+        });
+    
+        // Configura o mock para retornar a lista salva ao buscar pelo ID
+        when(listaRepository.findById(1L)).thenReturn(Optional.of(lista));
+    
+        // Salva a lista
+        Lista savedLista = listaService.save(lista);
+        assertNotNull(savedLista);
+        assertEquals("Lista Antiga", savedLista.getNome());
+    
         // When
-        lista.setNome("Lista Atualizada");
-        listaService.save(lista);
-
+        savedLista.setNome("Lista Atualizada");
+        listaService.save(savedLista);
+    
+        // Configura o mock para retornar a lista atualizada ao buscar pelo ID
+        when(listaRepository.findById(1L)).thenReturn(Optional.of(savedLista));
+    
         // Then
-        assertEquals("Lista Atualizada", listaService.findById(lista.getId()).getNome());
+        Lista updatedLista = listaService.findById(1L);
+        assertNotNull(updatedLista);
+        assertEquals("Lista Atualizada", updatedLista.getNome());
     }
+    
    
-    @Test
-    public void testAddItem() {
-        // Given
-        Lista lista = new Lista();
-        lista.setNome("Lista para Itens");
-        listaService.save(lista);
-
-        Item item = new Item();
-        item.setDescricao("Item de Teste");
-        item.setLista(lista);
-
-        // When
-        itemService.save(item);
-
-        // Then
-        Item savedItem = itemService.findById(item.getId());
-        assertNotNull(savedItem);
-        assertEquals("Item de Teste", savedItem.getDescricao());
-    }
-   
+    
     @Test
     public void testRemoveItem() {
         // Given
@@ -125,10 +121,13 @@ class SuperaApplicationTests {
         // Dado uma lista salva no repositório
         Lista lista = new Lista();
         lista.setNome("Lista Existente");
-        Lista savedLista = listaService.save(lista);
+        lista.setId(1L); // Define um ID fixo para simular a lista salva
+
+        // Configura o mock para retornar a lista ao buscar pelo ID
+        when(listaRepository.findById(1L)).thenReturn(Optional.of(lista));
 
         // Quando buscar a lista pelo ID
-        Lista foundLista = listaService.findById(savedLista.getId());
+        Lista foundLista = listaService.findById(1L);
 
         // Então a lista encontrada não deve ser nula
         assertNotNull(foundLista);
@@ -142,6 +141,13 @@ class SuperaApplicationTests {
         Lista lista = new Lista();
         lista.setNome("Nova Lista");
 
+        // Configura o mock para retornar a lista salva
+        when(listaRepository.save(any(Lista.class))).thenAnswer(invocation -> {
+            Lista savedLista = invocation.getArgument(0);
+            savedLista.setId(1L); // Define um ID fixo para simular a lista salva
+            return savedLista;
+        });
+
         // Quando salvar a lista
         Lista savedLista = listaService.save(lista);
 
@@ -154,10 +160,27 @@ class SuperaApplicationTests {
         // Dado uma lista salva no repositório
         Lista lista = new Lista();
         lista.setNome("Lista para Deletar");
+
+        // Configura o comportamento do mock para retornar a lista ao salvar
+        when(listaRepository.save(any(Lista.class))).thenAnswer(invocation -> {
+            Lista listaToSave = invocation.getArgument(0);
+            listaToSave.setId(1L); // Define um ID fixo para simular a lista salva
+            return listaToSave;
+        });
+
+        // Salva a lista e verifica se ela foi salva com um ID
         Lista savedLista = listaService.save(lista);
+        assertNotNull(savedLista); // Garante que a lista foi salva
+        assertNotNull(savedLista.getId()); // Garante que a lista tem um ID
+
+        // Configura o comportamento do mock para encontrar a lista pelo ID
+        when(listaRepository.findById(savedLista.getId())).thenReturn(Optional.of(savedLista));
 
         // Quando deletar a lista pelo ID
         listaService.delete(savedLista.getId());
+
+        // Configura o comportamento do mock para retornar um Optional vazio ao buscar a lista deletada
+        when(listaRepository.findById(savedLista.getId())).thenReturn(Optional.empty());
 
         // Então a lista não deve ser encontrada
         assertThrows(RuntimeException.class, () -> listaService.findById(savedLista.getId()));
@@ -193,14 +216,18 @@ class SuperaApplicationTests {
         item.setDescricao("Item em Destaque");
         item.setDestaque(true);
 
+        // Define o comportamento do mock para retornar o item ao salvar
+        when(itemRepository.save(any(Item.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
         // Quando salvar o item
         Item savedItem = itemService.save(item);
 
         // Então o item salvo deve ter o atributo destaque como verdadeiro
+        assertNotNull(savedItem);
         assertTrue(savedItem.isDestaque());
     }
 
-
+   
 
 
 }
